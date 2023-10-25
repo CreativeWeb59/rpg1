@@ -12,6 +12,7 @@ public class NPC_OldMan extends Entity{
         direction = "down";
         speed = 1;
         getImage();
+        setDialogue();
     }
     public void getImage(){
         up1 = setup("/resources/npc/oldman_up_1");
@@ -22,6 +23,12 @@ public class NPC_OldMan extends Entity{
         left2 = setup("/resources/npc/oldman_left_1");
         right1 = setup("/resources/npc/oldman_right_1");
         right2 = setup("/resources/npc/oldman_right_1");
+    }
+    public void setDialogue(){
+        dialogues[0] = "Salut, lad.";
+        dialogues[1] = "Alors, tu viens sur cette île pour trouver\nle trésor ?";
+        dialogues[2] = "J'étais le meilleur mage... mais\nmaintenant je suis trop vieux pour\ncontinuer l'aventure.";
+        dialogues[3] = "Bien, bonne chance à toi.";
     }
     public void setAction(){
         actionLockCounter ++;
@@ -43,6 +50,8 @@ public class NPC_OldMan extends Entity{
             }
             actionLockCounter = 0;
         }
-
+    }
+    public void speak(){
+        super.speak();
     }
 }

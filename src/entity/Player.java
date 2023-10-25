@@ -36,6 +36,9 @@ public class Player extends Entity{
         worldY = gp.tileSize * 21;
         speed = 4;
         direction = "down";
+        // player status
+        maxLife = 6;
+        life = maxLife;
     }
     public void getPlayerImage(){
         up1 = setup("/resources/player/boy_up_1");
@@ -109,8 +112,12 @@ public class Player extends Entity{
     }
     public void interactNPC(int i){
         if(i != 999){
-            System.out.println("you are hitting an npc !");
+            if(gp.keyH.enterPressed == true){
+                gp.gameState = gp.dialogueState;
+                gp.npc[i].speak();
+            }
         }
+        gp.keyH.enterPressed = false;
     }
     public void draw(Graphics2D g2){
         BufferedImage image = null;

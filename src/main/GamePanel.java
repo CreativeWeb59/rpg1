@@ -22,14 +22,12 @@ public class GamePanel extends JPanel implements Runnable{
     // world settings
     public final  int maxWorldCol = 50;
     public final  int maxWorldRow = 50;
-//    public final int worldWidth = tileSize * maxWorldCol;
-//    public final int worldHeight = tileSize * maxWorldRow;
 
     // fps
     int FPS = 60;
 
     TileManager tileM = new TileManager(this);
-    KeyHandler keyH = new KeyHandler(this);
+    public KeyHandler keyH = new KeyHandler(this);
     Sound music = new Sound();
     Sound se = new Sound();
     public CollisionChecker cChecker = new CollisionChecker(this);
@@ -43,9 +41,10 @@ public class GamePanel extends JPanel implements Runnable{
 
     // game state
     public int gameState;
+    public final int titleState = 0;
     public  final int playState = 1;
     public final int pauseState = 2;
-
+    public final int dialogueState = 3;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -59,7 +58,7 @@ public class GamePanel extends JPanel implements Runnable{
         aSetter.setObject();
         aSetter.setNPC();
 //        playMusic(0);
-        gameState = playState;
+        gameState = titleState;
     }
     public void startGameThread(){
         gameThread = new Thread(this);
@@ -121,26 +120,32 @@ public class GamePanel extends JPanel implements Runnable{
             drawStart = System.nanoTime();
         }
 
-
-        // tiles
-        tileM.draw(g2);
-        // objects
-        for (int i = 0; i < obj.length; i++) {
-            if(obj[i] != null){
-                obj[i].draw(g2, this);
+        // title screen
+        if(gameState == titleState){
+            ui.draw(g2);
+        } else {
+            // tiles
+            tileM.draw(g2);
+            // objects
+            for (int i = 0; i < obj.length; i++) {
+                if(obj[i] != null){
+                    obj[i].draw(g2, this);
+                }
             }
-        }
-        // Npc
-        for (int i = 0; i < npc.length; i++) {
-            if(npc[i] != null){
-                npc[i].draw(g2);
+            // Npc
+            for (int i = 0; i < npc.length; i++) {
+                if(npc[i] != null){
+                    npc[i].draw(g2);
+                }
             }
-        }
-        // player
-        player.draw(g2);
+            // player
+            player.draw(g2);
 
-        // Ui
-        ui.draw(g2);
+            // Ui
+            ui.draw(g2);
+        }
+
+
 
         if(keyH.checkDrawTime == true){
             long drawEnd = System.nanoTime();
