@@ -1,13 +1,12 @@
 package main;
 
+import entity.Entity;
 import object.OBJ_Heart;
-import object.SuperObject;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 
 public class UI {
     GamePanel gp;
@@ -37,7 +36,7 @@ public class UI {
         }
 
         // create hud object
-        SuperObject heart = new OBJ_Heart(gp);
+        Entity heart = new OBJ_Heart(gp);
         heart_full = heart.image;
         heart_half = heart.image2;
         heart_blank = heart.image3;
@@ -60,15 +59,46 @@ public class UI {
 
         // play state
         if(gp.gameState == gp.playState){
-            // do playsate stuff later
+            drawPlayerLife();
         }
         // pause state
         if(gp.gameState == gp.pauseState){
+            drawPlayerLife();
             drawPauseScreen();
         }
         // dialogue state
         if(gp.gameState == gp.dialogueState){
+            drawPlayerLife();
             drawDialogueScreen();
+        }
+    }
+    // affichage vie du joueur
+    public void drawPlayerLife(){
+//        gp.player.life = 3;
+        int x = gp.tileSize/2;
+        int y = gp.tileSize/2;
+        int i = 0;
+
+        // draw blank heart
+        while(i < gp.player.maxLife/2){
+            g2.drawImage(heart_blank, x, y, null);
+            i++;
+            x += gp.tileSize;
+        }
+        // reset
+        x = gp.tileSize/2;
+        y = gp.tileSize/2;
+        i = 0;
+
+        // draw current life
+        while(i < gp.player.life){
+            g2.drawImage(heart_half, x, y, null);
+            i++;
+            if( i < gp.player.life){
+                g2.drawImage(heart_full, x, y, null);
+            }
+            i++;
+            x += gp.tileSize;
         }
     }
     public void drawTitleScreen(){
@@ -161,7 +191,6 @@ public class UI {
                 g2.drawString(">", x-gp.tileSize, y);
             }
         }
-
 
     }
     public void drawPauseScreen(){
