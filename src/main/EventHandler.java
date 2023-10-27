@@ -74,6 +74,7 @@ public class EventHandler {
     }
     public void damagePit(int col, int row, int gameState){
         gp.gameState = gameState;
+        gp.playSE(6);
         gp.ui.currentDialogue = "Vous tombez dans un trou";
         gp.player.life -= 1;
         // permet d'activer les dégats une seule fois
@@ -83,6 +84,7 @@ public class EventHandler {
     public void healingPool(int col, int row, int gameState){
         if(gp.keyH.enterPressed == true){
             gp.gameState = gameState;
+            gp.player.attackCanceled = true;
             gp.ui.currentDialogue = "L'eau du lac vous régènere\ntoute votre vie.";
             gp.player.life = gp.player.maxLife;
         }

@@ -50,6 +50,7 @@ public class GamePanel extends JPanel implements Runnable{
     public  final int playState = 1;
     public final int pauseState = 2;
     public final int dialogueState = 3;
+    public final int characterState = 4;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -62,6 +63,7 @@ public class GamePanel extends JPanel implements Runnable{
     public void setupGame(){
         aSetter.setObject();
         aSetter.setNPC();
+        aSetter.setMonster();
 //        playMusic(0);
         gameState = titleState;
     }
@@ -110,6 +112,16 @@ public class GamePanel extends JPanel implements Runnable{
                     npc[i].update();
                 }
             }
+            for (int i = 0; i < monster.length; i++) {
+                if(monster[i] != null){
+                    if(monster[i].alive == true && monster[i].dying == false) {
+                        monster[i].update();
+                    }
+                    if(monster[i].alive == false) {
+                        monster[i] = null;
+                    }
+                }
+            }
         } else if(gameState == pauseState){
             // nothing
         }
@@ -145,7 +157,11 @@ public class GamePanel extends JPanel implements Runnable{
                     entityList.add(obj[i]);
                 }
             }
-
+            for (int i = 0; i < monster.length; i++) {
+                if(monster[i] != null){
+                    entityList.add(monster[i]);
+                }
+            }
             // sort
             Collections.sort(entityList, new Comparator<Entity>() {
                 @Override
@@ -159,9 +175,7 @@ public class GamePanel extends JPanel implements Runnable{
                 entityList.get(i).draw(g2);
             }
             // empty entity list
-            for (int i = 0; i < entityList.size(); i++) {
-                entityList.remove(i);
-            }
+            entityList.clear();
 
 //            // objects
 //            for (int i = 0; i < obj.length; i++) {
