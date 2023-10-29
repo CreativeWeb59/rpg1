@@ -8,7 +8,11 @@ public class OBJ_Sword_Normal extends Entity {
         super(gp);
 
         name = "Epée";
+        type = type_sword;
         down1 = setup("/resources/objects/sword_normal", gp.tileSize, gp.tileSize);
         attackValue = 1;
+        attackArea.width = 36;
+        attackArea.height = 36;
+        description = "[" + name + "]\nUne vieille épée.";
     }
 }

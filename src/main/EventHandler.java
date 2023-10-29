@@ -87,6 +87,7 @@ public class EventHandler {
             gp.player.attackCanceled = true;
             gp.ui.currentDialogue = "L'eau du lac vous régènere\ntoute votre vie.";
             gp.player.life = gp.player.maxLife;
+            gp.aSetter.setMonster();
         }
     }
     public void teleport(int gameState){
