@@ -32,9 +32,10 @@ public class Entity {
     public boolean dying = false;
     boolean hpBarOn = false;
     // counter
-    public int invicibleCounter = 0;
     public int spriteCounter = 0;
     public int actionLockCounter = 0;
+    public int invicibleCounter = 0;
+    public int shotAvailableCounter = 0;
     int dyingCounter = 0;
     int hpBarCounter = 0;
 
@@ -45,6 +46,7 @@ public class Entity {
     public int life;
     public int maxMana;
     public int mana;
+    public int ammo;
     public int speed;
     public int level;
     public int strength, dexterity, attack, defense, exp, nextLevelExp, coin;
@@ -54,7 +56,7 @@ public class Entity {
     public int attackValue;
     public int defenseValue;
     public String description = "";
-    public int userCost;
+    public int useCost;
     public int type; // 0 = player, 1 = npc, 2 = monster
     // type
     public final int type_player = 0;
@@ -115,18 +117,9 @@ public class Entity {
         boolean contactPlayer = gp.cChecker.checkPlayer(this);
 
         if(this.type == type_monster && contactPlayer == true){
-            if(gp.player.invicible == false){
-                // we can give damage
-                gp.playSE(6);
-                int damage = attack - gp.player.defense;
-                if(damage < 0){
-                    damage = 0;
-                }
-                gp.player.life -= damage;
-                gp.player.invicible = true;
-            }
+            damagePlayer(attack);
         }
-
+        // if collistion is false, player can move
         if(collisionOn == false){
             switch (direction){
                 case "up":
@@ -158,6 +151,21 @@ public class Entity {
                 invicible = false;
                 invicibleCounter = 0;
             }
+        }
+        if(shotAvailableCounter < 30){
+            shotAvailableCounter++;
+        }
+    }
+    public void damagePlayer(int attack){
+        if(gp.player.invicible == false){
+            // we can give damage
+            gp.playSE(6);
+            int damage = attack - gp.player.defense;
+            if(damage < 0){
+                damage = 0;
+            }
+            gp.player.life -= damage;
+            gp.player.invicible = true;
         }
     }
     public void draw(Graphics2D g2){
