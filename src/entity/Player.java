@@ -268,16 +268,24 @@ public class Player extends Entity {
 
     public void pickUpObject(int i) {
         if (i != 999) {
-            String text;
-            if(inventory.size() != maxInventorySize){
-                inventory.add(gp.obj[i]);
-                gp.playSE(1);
-                text = "Vous récupérez " + gp.obj[i].name + " !";
-                gp.obj[i] = null; // efface uniquement l'objet si on le récupère
+            // pickup only items
+            if(gp.obj[i].type == type_pickupOnly){
+                gp.obj[i].use(this);
+                gp.obj[i] = null;
             } else {
-                text = "Vous ne pouvez plus rien porter ! ";
+                // inventory items
+                String text;
+                if(inventory.size() != maxInventorySize){
+                    inventory.add(gp.obj[i]);
+                    gp.playSE(1);
+                    text = "Vous récupérez " + gp.obj[i].name + " !";
+                    gp.obj[i] = null; // efface uniquement l'objet si on le récupère
+                } else {
+                    text = "Vous ne pouvez plus rien porter ! ";
+                }
+                gp.ui.addMessage(text);
             }
-            gp.ui.addMessage(text);
+
         }
     }
 
