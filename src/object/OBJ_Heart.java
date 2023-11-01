@@ -3,14 +3,12 @@ package object;
 import entity.Entity;
 import main.GamePanel;
 
-import javax.imageio.ImageIO;
-import java.io.IOException;
-
 public class OBJ_Heart extends Entity {
     GamePanel gp;
     public OBJ_Heart(GamePanel gp) {
         super(gp);
         this.gp = gp;
+
         name = "Coeur";
         type = type_pickupOnly;
         value = 2;
@@ -22,10 +20,7 @@ public class OBJ_Heart extends Entity {
 
     public void use(Entity entity){
         gp.playSE(2);
-        gp.ui.addMessage(value + " vies");
+        gp.ui.addMessage("+ " + value + " vies");
         entity.life += value;
-        if(entity.life > entity.maxLife){
-            entity.life = entity.maxLife;
-        }
     }
 }

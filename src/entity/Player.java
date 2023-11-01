@@ -144,6 +144,9 @@ public class Player extends Entity {
             int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
             contactMonster(monsterIndex);
 
+            // check interactive tile collision
+            int iTileIndex = gp.cChecker.checkEntity(this, gp.iTile);
+
             // check event
             gp.eHandler.checkEvent();
 
@@ -216,6 +219,12 @@ public class Player extends Entity {
         if(shotAvailableCounter < 30){
             shotAvailableCounter++;
         }
+        if(life > maxLife){
+            life = maxLife;
+        }
+        if(mana > maxMana){
+            mana = maxMana;
+        }
     }
 
     public void attacking() {
@@ -253,6 +262,10 @@ public class Player extends Entity {
             // check monster collision with the updated worldX, worldY and solidArea;
             int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
             damageMonster(monsterIndex, attack);
+
+            int iTileIndex = gp.cChecker.checkEntity(this, gp.iTile);
+            damageInteractiveTile(iTileIndex);
+
             // after checking collision, resolte the original data
             worldX = currentWorldX;
             worldY = currentWorldY;
@@ -333,6 +346,20 @@ public class Player extends Entity {
                     exp += gp.monster[i].exp;
                     checkLevelUp();
                 }
+            }
+        }
+    }
+    public void damageInteractiveTile(int i){
+        if(i != 999 && gp.iTile[i].destructible == true && gp.iTile[i].isCorrectItem(this) == true &&
+        gp.iTile[i].invicible == false){
+            gp.iTile[i].playSE();
+            gp.iTile[i].life --;
+            gp.iTile[i].invicible = true;
+            // generate particle
+            generateParticle(gp.iTile[i], gp.iTile[i]);
+
+            if(gp.iTile[i].life == 0){
+                gp.iTile[i] = gp.iTile[i].getDestroyedForm();
             }
         }
     }
