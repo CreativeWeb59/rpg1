@@ -25,6 +25,8 @@ public class UI {
     public int slotCol = 0;
     public int slotRow = 0;
     int subState = 0;
+    int counter = 0;
+    public Entity npc;
 
     public UI(GamePanel gp) {
         this.gp = gp;
@@ -93,6 +95,14 @@ public class UI {
         // game Over state
         if(gp.gameState == gp.gameOverState ){
             drawGameOverScreen();
+        }
+        // transition state
+        if(gp.gameState == gp.transitionState ){
+            drawTransition();
+        }
+        // trade state
+        if(gp.gameState == gp.tradeState ){
+            drawTradeScreen();
         }
     }
     // affichage vie du joueur
@@ -265,9 +275,9 @@ public class UI {
     }
     public void drawDialogueScreen(){
         // window
-        int x = gp.tileSize*2;
+        int x = gp.tileSize*3;
         int y = gp.tileSize/2;
-        int width = gp.screenWidth - (gp.tileSize*4);
+        int width = gp.screenWidth - (gp.tileSize*6);
         int height = gp.tileSize * 4;
         drawSubWindow(x, y, width, height);
 
@@ -692,6 +702,40 @@ public class UI {
             }
         }
     }
+    public void drawTransition(){
+        counter ++;
+        g2.setColor(new Color(0, 0, 0, counter*5));
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+        if(counter == 50){
+            counter = 0;
+            gp.gameState = gp.playState;
+            gp.currentMap = gp.eHandler.tempMap;
+            gp.player.worldX = gp.tileSize * gp.eHandler.tempCol;
+            gp.player.worldY = gp.tileSize * gp.eHandler.tempRow;
+            gp.eHandler.previousEventX = gp.player.worldX;
+            gp.eHandler.previousEventY = gp.player.worldY;
+        }
+    }
+    public void drawTradeScreen(){
+        switch (subState){
+            case 0: trade_select(); break;
+            case 1: trade_buy(); break;
+            case 2: trade_sell(); break;
+        }
+        gp.keyH.enterPressed = false;
+    }
+    public void trade_select(){
+        drawDialogueScreen();
+        // draw window
+        int x = gp.tileSize * 15;
+        int y = gp.tileSize * 4;
+        int width = gp.tileSize * 3;
+        int height = (int)(gp.tileSize * 3.5);
+        drawSubWindow(x, y, width, height);
+
+    }
+    public void trade_buy(){}
+    public void trade_sell(){}
     public int getItemIndexOnSlot(){
         int itemIndex = slotCol + (slotRow*5);
 

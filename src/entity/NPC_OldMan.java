@@ -18,11 +18,11 @@ public class NPC_OldMan extends Entity{
         up1 = setup("/resources/npc/oldman_up_1", gp.tileSize, gp.tileSize);
         up2 = setup("/resources/npc/oldman_up_2", gp.tileSize, gp.tileSize);
         down1 = setup("/resources/npc/oldman_down_1", gp.tileSize, gp.tileSize);
-        down2 = setup("/resources/npc/oldman_down_1", gp.tileSize, gp.tileSize);
+        down2 = setup("/resources/npc/oldman_down_2", gp.tileSize, gp.tileSize);
         left1 = setup("/resources/npc/oldman_left_1", gp.tileSize, gp.tileSize);
-        left2 = setup("/resources/npc/oldman_left_1", gp.tileSize, gp.tileSize);
+        left2 = setup("/resources/npc/oldman_left_2", gp.tileSize, gp.tileSize);
         right1 = setup("/resources/npc/oldman_right_1", gp.tileSize, gp.tileSize);
-        right2 = setup("/resources/npc/oldman_right_1", gp.tileSize, gp.tileSize);
+        right2 = setup("/resources/npc/oldman_right_2", gp.tileSize, gp.tileSize);
     }
     public void setDialogue(){
         dialogues[0] = "Salut, lad.";
