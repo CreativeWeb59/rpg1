@@ -11,5 +11,6 @@ public class OBJ_Boots extends Entity {
         super(gp);
         name = "Bottes";
         down1 = setup("/resources/objects/boots", gp.tileSize, gp.tileSize);
+        price = 50;
     }
 }

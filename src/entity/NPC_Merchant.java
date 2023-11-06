@@ -35,7 +35,7 @@ public class NPC_Merchant extends Entity{
         right2 = setup("/resources/npc/merchant_down_2", gp.tileSize, gp.tileSize);
     }
     public void setDialogue(){
-        dialogues[0] = "Bienvenue dans ma boutique !\nJ'ai choses intéressantes pour toi.\n Tu viens pour acheter ?";
+        dialogues[0] = "Bienvenue dans ma boutique !\nJ'ai des choses intéressantes pour toi.\nTu viens pour acheter ?";
     }
     public void setItems(){
         inventory.add(new OBJ_Potion_Red(gp));

@@ -6,7 +6,6 @@ import object.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 
 public class Player extends Entity {
@@ -57,7 +56,7 @@ public class Player extends Entity {
         dexterity = 1; // the more dexterity he hass, the less damage he receives
         exp = 0;
         nextLevelExp = 5;
-        coin = 0;
+        coin = 500;
         currentWeapon = new OBJ_Sword_Normal(gp);
         currentShield = new OBJ_Shield_Wood(gp);
         projectile = new OBJ_Fireball(gp);
@@ -397,7 +396,7 @@ public class Player extends Entity {
     }
 
     public void selectItem(){
-        int itemIndex = gp.ui.getItemIndexOnSlot();
+        int itemIndex = gp.ui.getItemIndexOnSlot(gp.ui.playerSlotCol, gp.ui.playerSlotRow);
         if(itemIndex < inventory.size()){
             Entity selectedItems = inventory.get(itemIndex);
             if(selectedItems.type == type_sword || selectedItems.type == type_axe){

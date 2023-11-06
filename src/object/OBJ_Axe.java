@@ -13,5 +13,6 @@ public class OBJ_Axe extends Entity {
         attackArea.height = 30;
         down1 = setup("/resources/objects/axe", gp.tileSize, gp.tileSize);
         description = "[" + name + "]\nSert à couper du bois";
+        price = 75;
     }
 }

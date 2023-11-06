@@ -15,6 +15,7 @@ public class OBJ_Potion_Red extends Entity {
         down1 = setup("/resources/objects/potion_red", gp.tileSize, gp.tileSize);
         defenseValue = 1;
         description = "[" + name + "]\nRedonne " + value + " points de vie.";
+        price = 50;
     }
     public void use(Entity entity){
         gp.gameState = gp.dialogueState;
