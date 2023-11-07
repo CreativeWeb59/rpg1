@@ -33,6 +33,7 @@ public class Entity {
     public boolean dying = false;
     boolean hpBarOn = false;
     public boolean onPath = false;
+    public boolean knockBack = false;
     // counter
     public int spriteCounter = 0;
     public int actionLockCounter = 0;
@@ -40,10 +41,12 @@ public class Entity {
     public int shotAvailableCounter = 0;
     int dyingCounter = 0;
     int hpBarCounter = 0;
+    int knockBackCounter = 0;
 
     // character attributes
 
     public  String name;
+    public int defaultSpeed;
     public int maxLife;
     public int life;
     public int maxMana;
@@ -63,6 +66,7 @@ public class Entity {
     public String description = "";
     public int useCost;
     public int price;
+    public int knockBackPower = 0;
     // type
     public int type; // 0 = player, 1 = npc, 2 = monster
     public final int type_player = 0;
@@ -73,9 +77,28 @@ public class Entity {
     public final int type_shield = 5;
     public final int type_consumable = 6;
     public final int type_pickupOnly = 7;
+    public final int type_obstacle = 8;
 
     public Entity(GamePanel gp) {
         this.gp = gp;
+    }
+    public int getLeftX(){
+        return worldX + solidArea.x;
+    }
+    public int getRightX(){
+        return worldX + solidArea.x + solidArea.width;
+    }
+    public int getTopY(){
+        return worldY + solidArea.y;
+    }
+    public int getBottomY(){
+        return worldY + solidArea.y + solidArea.height;
+    }
+    public int getCol(){
+        return (worldX + solidArea.x)/gp.tileSize;
+    }
+    public int getRow(){
+        return (worldY + solidArea.y)/gp.tileSize;
     }
     public void setAction(){
     }
@@ -102,7 +125,12 @@ public class Entity {
                 break;
         }
     }
-    public void use(Entity entity){}
+    public void interact(){
+
+    }
+    public boolean use(Entity entity){
+        return false;
+    }
     public void checkDrop(){
 
     }
@@ -161,45 +189,70 @@ public class Entity {
         }
     }
     public void update(){
-        setAction();
-        checkCollision();
+        if(knockBack == true){
+            checkCollision();
 
-        // if collistion is false, player can move
-        if(collisionOn == false){
-            switch (direction){
-                case "up":
-                    worldY -= speed;
-                    break;
-                case "down":
-                    worldY += speed;
-                    break;
-                case "left":
-                    worldX -= speed;
-                    break;
-                case "right":
-                    worldX += speed;
-                    break;
+            if(collisionOn == true){
+                knockBackCounter = 0;
+                knockBack = false;
+                speed = defaultSpeed;
+            } else if (collisionOn == false) {
+                switch (gp.player.direction){
+                    case "up": worldY -= speed; break;
+                    case "down": worldY += speed; break;
+                    case "left": worldX -= speed; break;
+                    case "right": worldX += speed; break;
+                }
+                knockBackCounter++;
+                if(knockBackCounter == 10){ // distance du knockBack
+                    knockBackCounter = 0;
+                    knockBack = false;
+                    speed = defaultSpeed;
+                }
+            }
+
+        } else {
+            setAction();
+            checkCollision();
+
+            // if collistion is false, player can move
+            if(collisionOn == false){
+                switch (direction){
+                    case "up":
+                        worldY -= speed;
+                        break;
+                    case "down":
+                        worldY += speed;
+                        break;
+                    case "left":
+                        worldX -= speed;
+                        break;
+                    case "right":
+                        worldX += speed;
+                        break;
+                }
+            }
+            spriteCounter ++;
+            if (spriteCounter > 24){
+                if (spriteNum == 1){
+                    spriteNum = 2;
+                } else if (spriteNum == 2) {
+                    spriteNum = 1;
+                }
+                spriteCounter = 0;
+            }
+            if (invicible == true) {
+                invicibleCounter++;
+                if (invicibleCounter > 40) {
+                    invicible = false;
+                    invicibleCounter = 0;
+                }
+            }
+            if(shotAvailableCounter < 30){
+                shotAvailableCounter++;
             }
         }
-        spriteCounter ++;
-        if (spriteCounter > 24){
-            if (spriteNum == 1){
-                spriteNum = 2;
-            } else if (spriteNum == 2) {
-                spriteNum = 1;
-            }
-            spriteCounter = 0;
-        }
-        if (invicible == true) {
-            invicibleCounter++;
-            if (invicibleCounter > 40) {
-                invicible = false;
-                invicibleCounter = 0;
-            }
-        }
-        if(shotAvailableCounter < 30){
-            shotAvailableCounter++;
-        }
+
     }
     public void damagePlayer(int attack){
         if(gp.player.invicible == false){
@@ -383,11 +436,40 @@ public class Entity {
                     direction = "right";
                 }
             }
-            int nextCol = gp.pFinder.pathList.get(0).col;
-            int nextRow = gp.pFinder.pathList.get(0).row;
-            if(nextCol == goalCol && nextRow == goalRow){
-                onPath = false;
+
+            // if reaches the goal, stop the search
+//            int nextCol = gp.pFinder.pathList.get(0).col;
+//            int nextRow = gp.pFinder.pathList.get(0).row;
+//            if(nextCol == goalCol && nextRow == goalRow){
+//                onPath = false;
+//            }
+        }
+    }
+    public int getDetected(Entity user, Entity target[][], String targetName){
+        int index = 999;
+        // check the surrounding object
+        int nexWorldX = user.getLeftX();
+        int nexWorldY = user.getTopY();
+
+        switch (user.direction){
+            case "up": nexWorldY = user.getTopY() - 1; break;
+            case "down": nexWorldY = user.getBottomY() + 1; break;
+            case "left": nexWorldX = user.getLeftX() - 1; break;
+            case "right": nexWorldX = user.getRightX() + 1; break;
+        }
+        int col = nexWorldX/gp.tileSize;
+        int row = nexWorldY/gp.tileSize;
+
+        for (int i = 0; i < target[1].length; i++) {
+            if(target[gp.currentMap][i] != null){
+                if(target[gp.currentMap][i].getCol() == col &&
+                        target[gp.currentMap][i].getRow() == row &&
+                        target[gp.currentMap][i].name.equals(targetName)){
+                    index = i;
+                    break;
+                }
             }
         }
+        return index;
     }
 }

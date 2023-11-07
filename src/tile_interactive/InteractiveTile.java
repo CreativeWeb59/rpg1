@@ -4,7 +4,6 @@ import entity.Entity;
 import main.GamePanel;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class InteractiveTile extends Entity {
     GamePanel gp;

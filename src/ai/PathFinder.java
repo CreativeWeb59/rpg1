@@ -58,7 +58,7 @@ public class PathFinder {
         startNode = node[startCol][startRow];
         currentNode = startNode;
         goalNode = node[goalCol][goalRow];
-        openList.add(goalNode);
+        openList.add(currentNode);
 
         int col = 0;
         int row = 0;
@@ -118,17 +118,18 @@ public class PathFinder {
                 openNode(node[col-1][row]);
             }
             // open the down node
-            if(row +1 >=0){
+            if(row +1 < gp.maxWorldRow){
                 openNode(node[col][row+1]);
             }
             // open the right node
-            if(col +1 >=0){
+            if(col +1 < gp.maxWorldCol){
                 openNode(node[col+1][row]);
             }
 
             // find the best node
             int bestNodeIndex = 0;
             int bestNodefCost = 999;
+
             for (int i = 0; i < openList.size(); i++) {
                 // check if this node's F cost is better
                 if(openList.get(i).fCost < bestNodefCost){
