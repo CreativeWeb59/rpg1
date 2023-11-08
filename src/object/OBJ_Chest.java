@@ -37,11 +37,10 @@ public class OBJ_Chest extends Entity {
             StringBuilder sb = new StringBuilder();
             sb.append("Vous ouvrez le coffre et vous y trouvez\nune " + loot.name + " !");
 
-            if (gp.player.inventory.size() == gp.player.maxInventorySize) {
+            if (gp.player.canObtainItem(loot) == false) {
                 sb.append("\n... Vous ne pouvez pas en emporter plus !");
             } else {
                 sb.append("\nVous obtenez une \n" + loot.name + " !");
-                gp.player.inventory.add(loot);
                 down1 = image;
                 opened = true;
             }
