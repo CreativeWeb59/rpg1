@@ -55,7 +55,7 @@ public class Entity {
     public int speed;
     public int level;
     public int strength, dexterity, attack, defense, exp, nextLevelExp, coin;
-    public Entity currentWeapon, currentShield;
+    public Entity currentWeapon, currentShield, currentLight;
     public Projectile projectile;
     // item attributes
     public ArrayList<Entity> inventory = new ArrayList<>();
@@ -69,6 +69,7 @@ public class Entity {
     public int knockBackPower = 0;
     public boolean stackable = false;
     public int amount = 1;
+    public int lightRadius;
     // type
     public int type; // 0 = player, 1 = npc, 2 = monster
     public final int type_player = 0;
@@ -80,6 +81,7 @@ public class Entity {
     public final int type_consumable = 6;
     public final int type_pickupOnly = 7;
     public final int type_obstacle = 8;
+    public final int type_light = 9;
 
     public Entity(GamePanel gp) {
         this.gp = gp;

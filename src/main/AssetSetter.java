@@ -20,6 +20,10 @@ public class AssetSetter {
         gp.obj[mapNum][i].worldX = gp.tileSize*33;
         gp.obj[mapNum][i].worldY = gp.tileSize*7;
         i++;
+        gp.obj[mapNum][i] = new OBJ_Lantern(gp);
+        gp.obj[mapNum][i].worldX = gp.tileSize*18;
+        gp.obj[mapNum][i].worldY = gp.tileSize*20;
+        i++;
         gp.obj[mapNum][i] = new OBJ_Door(gp);
         gp.obj[mapNum][i].worldX = gp.tileSize*14;
         gp.obj[mapNum][i].worldY = gp.tileSize*28;

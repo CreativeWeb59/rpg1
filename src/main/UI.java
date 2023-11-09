@@ -109,6 +109,10 @@ public class UI {
         if(gp.gameState == gp.tradeState ){
             drawTradeScreen();
         }
+        // sleep state
+        if(gp.gameState == gp.sleepState ){
+            drawSleepScreen();
+        }
     }
     // affichage vie du joueur
     public void drawPlayerLife(){
@@ -437,7 +441,8 @@ public class UI {
         for (int i = 0; i < entity.inventory.size(); i++) {
             // equip cursor
             if (entity.inventory.get(i) == entity.currentWeapon ||
-                    entity.inventory.get(i) == entity.currentShield){
+                    entity.inventory.get(i) == entity.currentShield ||
+            entity.inventory.get(i) == entity.currentLight){
                 g2.setColor(new Color(240, 190, 90));
                 g2.fillRoundRect(slotX, slotY, gp.tileSize, gp.tileSize, 10, 10);
             }
@@ -918,6 +923,10 @@ public class UI {
                 }
             }
         }
+
+    }
+    public void drawSleepScreen(){
+        counter++;
 
     }
     public int getItemIndexOnSlot(int slotCol, int slotRow){
