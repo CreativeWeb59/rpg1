@@ -18,6 +18,11 @@ public class OBJ_Tent extends Entity {
         stackable = true;
     }
     public boolean use(Entity entity){
-
+        gp.gameState = gp.sleepState;
+        gp.playSE(14);
+        gp.player.life = gp.player.maxLife;
+        gp.player.mana = gp.player.maxMana;
+        gp.player.getSleepingImage(down1);
+        return true; // objet réutilisable sinon mettre false
     }
 }

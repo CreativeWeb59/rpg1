@@ -8,14 +8,14 @@ import java.awt.image.BufferedImage;
 public class Lighting {
     GamePanel gp;
     BufferedImage darknessFilter;
-    int dayCounter;
+    public int dayCounter;
     public float filterAlpha = 0f;
 
     public final int day = 0;
-    final int dusk = 1;
-    final int night = 2;
-    final int dawn = 3;
-    int dayState = day;
+    public final int dusk = 1;
+    public final int night = 2;
+    public final int dawn = 3;
+    public int dayState = day;
 
     public Lighting(GamePanel gp) {
         this.gp = gp;
