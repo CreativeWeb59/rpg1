@@ -4,6 +4,7 @@ import ai.PathFinder;
 import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;
+import tile.Map;
 import tile.TileManager;
 import tile_interactive.InteractiveTile;
 
@@ -51,6 +52,7 @@ public class GamePanel extends JPanel implements Runnable{
     Config config = new Config(this);
     public PathFinder pFinder = new PathFinder(this);
     EnvironmentManager eManager = new EnvironmentManager(this);
+    Map map = new Map(this);
     Thread gameThread;
 
     // entity and object
@@ -76,6 +78,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int transitionState = 7;
     public final int tradeState = 8;
     public final int sleepState = 9;
+    public final int mapState = 10;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -149,7 +152,7 @@ public class GamePanel extends JPanel implements Runnable{
 
             if (delta >= 1){
                 update();
-                drawTempScreen(); // draw everything to the buffered image
+                drawToTempScreen(); // draw everything to the buffered image
                 drawToScreen(); // draw the buffered image to the screen
 //                repaint();
                 delta --;
@@ -220,7 +223,7 @@ public class GamePanel extends JPanel implements Runnable{
         }
 
     }
-    public void drawTempScreen(){
+    public void drawToTempScreen(){
         // debug
         long drawStart = 0;
         if(keyH.checkDrawTime == true){
@@ -230,7 +233,12 @@ public class GamePanel extends JPanel implements Runnable{
         // title screen
         if(gameState == titleState){
             ui.draw(g2);
-        } // others
+        }
+        // mini map
+        else if(gameState == mapState){
+            map.drawFullMapScreen(g2);
+        }
+        // others
         else {
             // tiles
             tileM.draw(g2);
@@ -288,6 +296,9 @@ public class GamePanel extends JPanel implements Runnable{
 
             // environement
             eManager.draw(g2);
+
+            // mini map
+            map.drawMiniMap(g2);
 
             // Ui
             ui.draw(g2);

@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Entity {
     GamePanel gp;
@@ -19,6 +20,7 @@ public class Entity {
     public Rectangle attackArea = new Rectangle(0, 0, 0, 0);
     public int solidAreaDefaultX, solidAreaDefaultY;
     String dialogues[] = new String[20];
+    public Entity attacker;
     public boolean collision = false;
 
     // state
@@ -34,6 +36,7 @@ public class Entity {
     boolean hpBarOn = false;
     public boolean onPath = false;
     public boolean knockBack = false;
+    public String knockBackDirection;
     // counter
     public int spriteCounter = 0;
     public int actionLockCounter = 0;
@@ -103,6 +106,26 @@ public class Entity {
     }
     public int getRow(){
         return (worldY + solidArea.y)/gp.tileSize;
+    }
+    public int getXdistance(Entity target){
+        int xDistance = Math.abs(worldX - target.worldX);
+        return xDistance;
+    }
+    public int getYdistance(Entity target){
+        int yDistance = Math.abs(worldY - target.worldY);
+        return yDistance;
+    }
+    public int getTileDistance(Entity target){
+        int tileDistance = (getXdistance(target) + getYdistance(target))/gp.tileSize;
+        return tileDistance;
+    }
+    public int getGoalCol(Entity target){
+        int goalCol = (target.worldX + target.solidArea.x)/gp.tileSize;
+        return goalCol;
+    }
+    public int getGoalRow(Entity target){
+        int goalRow = (target.worldY + target.solidArea.y)/gp.tileSize;
+        return goalRow;
     }
     public void setAction(){
     }
@@ -201,7 +224,7 @@ public class Entity {
                 knockBack = false;
                 speed = defaultSpeed;
             } else if (collisionOn == false) {
-                switch (gp.player.direction){
+                switch (knockBackDirection){
                     case "up": worldY -= speed; break;
                     case "down": worldY += speed; break;
                     case "left": worldX -= speed; break;
@@ -258,6 +281,57 @@ public class Entity {
         }
 
     }
+    public void checkShootOrNot(int rate, int shotInterval){
+        int i = new Random().nextInt(rate) + 1;
+        if (i == 0 && projectile.alive == false && shotAvailableCounter == shotInterval){
+            projectile.set(worldX, worldY, direction, true, this);
+//                gp.projectileList.add(projectile);
+            // check vacancy
+            for (int ii = 0; ii < gp.projectile[1].length; ii++) {
+                if (gp.projectile[gp.currentMap][ii] == null) {
+                    gp.projectile[gp.currentMap][ii] = projectile;
+                    break;
+                }
+            }
+            shotAvailableCounter = 0;
+        }
+    }
+    public void checkStartChasingOrNot(Entity target, int distance, int rate){
+        if(getTileDistance(target) < distance){
+            int i = new Random().nextInt(rate);
+            if(i == 0){
+                onPath = true;
+            }
+        }
+    }
+    public void checkStopChasingOrNot(Entity target, int distance, int rate){
+        if(getTileDistance(target) > distance){
+            int i = new Random().nextInt(rate);
+            if(i == 0){
+                onPath = false;
+            }
+        }
+    }
+    public void getRandomDirection(){
+        actionLockCounter ++;
+        if(actionLockCounter == 120){
+            Random random = new Random();
+            int i = random.nextInt(100)+1; // random from 1 to 100
+            if(i <=25){
+                direction = "up";
+            }
+            if (i > 25 && i <= 50){
+                direction = "down";
+            }
+            if (i > 50 && i <= 75){
+                direction = "left";
+            }
+            if (i > 75 && i <= 100){
+                direction = "right";
+            }
+            actionLockCounter = 0;
+        }
+    }
     public void damagePlayer(int attack){
         if(gp.player.invicible == false){
             // we can give damage
@@ -269,6 +343,13 @@ public class Entity {
             gp.player.life -= damage;
             gp.player.invicible = true;
         }
+    }
+
+    public void setKnockBack(Entity target, Entity attacker, int knockBackPower) {
+        this.attacker = attacker;
+        target.knockBackDirection = attacker.direction;
+        target.speed += knockBackPower;
+        target.knockBack = true;
     }
     public void draw(Graphics2D g2){
         BufferedImage image = null;
