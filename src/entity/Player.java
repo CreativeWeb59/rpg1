@@ -33,8 +33,9 @@ public class Player extends Entity {
         solidArea.height = 32;
 
         setDefaultValues();
-        getPlayerImage();
-        getPlayerAttackImage();
+        getImage();
+        getAttackImage();
+        getGuardImage();
         setItems();
     }
 
@@ -88,6 +89,8 @@ public class Player extends Entity {
 
     public int getAttack() {
         attackArea = currentWeapon.attackArea;
+        motion1_duration = currentWeapon.motion1_duration;
+        motion2_duration = currentWeapon.motion2_duration;
         return attack = strength * currentWeapon.attackValue;
     }
 
@@ -95,7 +98,7 @@ public class Player extends Entity {
         return defense = dexterity * currentShield.defenseValue;
     }
 
-    public void getPlayerImage() {
+    public void getImage() {
         up1 = setup("/resources/player/boy_up_1", gp.tileSize, gp.tileSize);
         up2 = setup("/resources/player/boy_up_2", gp.tileSize, gp.tileSize);
         down1 = setup("/resources/player/boy_down_1", gp.tileSize, gp.tileSize);
@@ -116,7 +119,7 @@ public class Player extends Entity {
         right2 = image;
     }
 
-    public void getPlayerAttackImage() {
+    public void getAttackImage() {
         if (currentWeapon.type == type_sword) {
             attackUp1 = setup("/resources/player/boy_attack_up_1", gp.tileSize, gp.tileSize * 2);
             attackUp2 = setup("/resources/player/boy_attack_up_2", gp.tileSize, gp.tileSize * 2);
@@ -138,11 +141,22 @@ public class Player extends Entity {
             attackRight2 = setup("/resources/player/boy_axe_right_2", gp.tileSize * 2, gp.tileSize);
         }
     }
-
+    public void getGuardImage(){
+        guardUp = setup("/resources/player/boy_guard_up", gp.tileSize, gp.tileSize);
+        guardDown = setup("/resources/player/boy_guard_down", gp.tileSize, gp.tileSize);
+        guardLeft = setup("/resources/player/boy_guard_left", gp.tileSize, gp.tileSize);
+        guardRight = setup("/resources/player/boy_guard_right", gp.tileSize, gp.tileSize);
+    }
     public void update() {
         if (attacking == true) {
             attacking();
-        } else if (keyH.upPressed == true || keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true
+        }
+        else if(keyH.spacePressesd == true){{
+            guarding = true;
+        }
+
+        }
+        else if (keyH.upPressed == true || keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true
                 || keyH.enterPressed == true) {
             if (keyH.upPressed == true) {
                 direction = "up";
@@ -204,8 +218,8 @@ public class Player extends Entity {
                 spriteCounter = 0;
             }
             attackCanceled = false;
-
             gp.keyH.enterPressed = false;
+            guarding = false;
 
             spriteCounter++;
             if (spriteCounter > 12) {
@@ -222,6 +236,7 @@ public class Player extends Entity {
                 spriteNum = 1;
                 spriteCounter = 0;
             }
+            guarding = false;
         }
         if (gp.keyH.shotKeyPressed == true && projectile.alive == false && shotAvailableCounter == 30
                 && projectile.haveResource(this) == true) {
@@ -262,61 +277,6 @@ public class Player extends Entity {
             gp.ui.commandNum = -1;
             gp.stopMusic();
             gp.playSE(12);
-        }
-    }
-
-    public void attacking() {
-        spriteCounter++;
-        if (spriteCounter <= 5) {
-            spriteNum = 1;
-        }
-        if (spriteCounter < 5 && spriteCounter <= 25) {
-            spriteNum = 2;
-
-            // save the current worldX, worldY, solidArea
-            int currentWorldX = worldX;
-            int currentWorldY = worldY;
-            int solidAreaWidth = solidArea.width;
-            int solidAreaHeight = solidArea.height;
-
-            // adjust player's worldX/Y for the attackArea
-            switch (direction) {
-                case "up":
-                    worldY -= attackArea.height;
-                    break;
-                case "down":
-                    worldY += attackArea.height;
-                    break;
-                case "left":
-                    worldX -= attackArea.width;
-                    break;
-                case "rigth":
-                    worldX -= attackArea.width;
-                    break;
-            }
-            // attackArea becomes solidArea
-            solidAreaWidth = attackArea.width;
-            solidAreaHeight = attackArea.height;
-            // check monster collision with the updated worldX, worldY and solidArea;
-            int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
-            damageMonster(monsterIndex, this, attack, currentWeapon.knockBackPower);
-
-            int iTileIndex = gp.cChecker.checkEntity(this, gp.iTile);
-            damageInteractiveTile(iTileIndex);
-
-            int projectileIndex = gp.cChecker.checkEntity(this, gp.projectile);
-            damageProjectile(projectileIndex);
-
-            // after checking collision, resolte the original data
-            worldX = currentWorldX;
-            worldY = currentWorldY;
-            solidArea.width = solidAreaWidth;
-            solidArea.height = solidAreaHeight;
-        }
-        if (spriteCounter > 25) {
-            spriteNum = 1;
-            spriteCounter = 0;
-            attacking = false;
         }
     }
 
@@ -446,7 +406,7 @@ public class Player extends Entity {
             if (selectedItems.type == type_sword || selectedItems.type == type_axe) {
                 currentWeapon = selectedItems;
                 attack = getAttack();
-                getPlayerAttackImage();
+                getAttackImage();
                 ;
             }
             if (selectedItems.type == type_shield) {
@@ -532,6 +492,9 @@ public class Player extends Entity {
                         image = attackUp2;
                     }
                 }
+                if(guarding == true){
+                    image = guardUp;
+                }
                 break;
             case "down":
                 if (attacking == false) {
@@ -549,6 +512,9 @@ public class Player extends Entity {
                     if (spriteNum == 2) {
                         image = attackDown2;
                     }
+                }
+                if(guarding == true){
+                    image = guardDown;
                 }
                 break;
             case "left":
@@ -569,6 +535,9 @@ public class Player extends Entity {
                         image = attackLeft2;
                     }
                 }
+                if(guarding == true){
+                    image = guardLeft;
+                }
                 break;
             case "right":
                 if (attacking == false) {
@@ -586,6 +555,9 @@ public class Player extends Entity {
                     if (spriteNum == 2) {
                         image = attackRight2;
                     }
+                }
+                if(guarding == true){
+                    image = guardRight;
                 }
                 break;
         }

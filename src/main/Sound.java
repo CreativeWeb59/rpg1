@@ -29,6 +29,8 @@ public class Sound {
         soundURL[12] = getClass().getResource("/resources/sound/gameover.wav");
         soundURL[13] = getClass().getResource("/resources/sound/stairs.wav");
         soundURL[14] = getClass().getResource("/resources/sound/sleep.wav");
+        soundURL[15] = getClass().getResource("/resources/sound/blocked.wav");
+        soundURL[16] = getClass().getResource("/resources/sound/parry.wav");
     }
 
     public void setFile(int i){
