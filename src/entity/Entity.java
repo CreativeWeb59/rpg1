@@ -40,6 +40,7 @@ public class Entity {
     public boolean knockBack = false;
     public String knockBackDirection;
     public boolean guarding = false;
+    public boolean transparent = false;
     // counter
     public int spriteCounter = 0;
     public int actionLockCounter = 0;
@@ -228,12 +229,21 @@ public class Entity {
                 knockBack = false;
                 speed = defaultSpeed;
             } else if (collisionOn == false) {
-                switch (knockBackDirection){
-                    case "up": worldY -= speed; break;
-                    case "down": worldY += speed; break;
-                    case "left": worldX -= speed; break;
-                    case "right": worldX += speed; break;
+                switch (knockBackDirection) {
+                    case "up":
+                        worldY -= speed;
+                        break;
+                    case "down":
+                        worldY += speed;
+                        break;
+                    case "left":
+                        worldX -= speed;
+                        break;
+                    case "right":
+                        worldX += speed;
+                        break;
                 }
+            }
                 knockBackCounter++;
                 if(knockBackCounter == 10){ // distance du knockBack
                     knockBackCounter = 0;
@@ -243,7 +253,7 @@ public class Entity {
             }
         else if(attacking == true){
             attacking();
-            }
+            
         } else {
             setAction();
             checkCollision();
@@ -462,9 +472,10 @@ public class Entity {
                     damage = 1;
                 }
             }
-            // we can give damage
-
-
+            if(damage != 0){
+                gp.player.transparent = true;
+                setKnockBack(gp.player, this, knockBackPower);
+            }
 
             gp.player.life -= damage;
             gp.player.invicible = true;

@@ -148,14 +148,50 @@ public class Player extends Entity {
         guardRight = setup("/resources/player/boy_guard_right", gp.tileSize, gp.tileSize);
     }
     public void update() {
-        if (attacking == true) {
+        if(knockBack == true){
+            collisionOn = false;
+            gp.cChecker.checkTile(this); // active / desactive les collisions
+            gp.cChecker.checkObject(this, true);
+            gp.cChecker.checkEntity(this, gp.npc);
+            gp.cChecker.checkEntity(this, gp.monster);
+            gp.cChecker.checkEntity(this, gp.iTile);
+
+
+            if(collisionOn == true){
+                knockBackCounter = 0;
+                knockBack = false;
+                speed = defaultSpeed;
+            } else if (collisionOn == false) {
+                switch (knockBackDirection) {
+                    case "up":
+                        worldY -= speed;
+                        break;
+                    case "down":
+                        worldY += speed;
+                        break;
+                    case "left":
+                        worldX -= speed;
+                        break;
+                    case "right":
+                        worldX += speed;
+                        break;
+                }
+            }
+                knockBackCounter++;
+                if(knockBackCounter == 10){ // distance du knockBack
+                    knockBackCounter = 0;
+                    knockBack = false;
+                    speed = defaultSpeed;
+                }
+            }
+
+        else if (attacking == true) {
             attacking();
         }
-        else if(keyH.spacePressesd == true){{
+        else if(keyH.spacePressesd == true){
             guarding = true;
         }
 
-        }
         else if (keyH.upPressed == true || keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true
                 || keyH.enterPressed == true) {
             if (keyH.upPressed == true) {
@@ -260,6 +296,7 @@ public class Player extends Entity {
             invicibleCounter++;
             if (invicibleCounter > 60) {
                 invicible = false;
+                transparent = false;
                 invicibleCounter = 0;
             }
         }
@@ -324,11 +361,12 @@ public class Player extends Entity {
             if (invicible == false && gp.monster[gp.currentMap][i].dying == false) {
                 gp.playSE(6);
                 int damage = gp.monster[gp.currentMap][i].attack - defense;
-                if (damage < 0) {
-                    damage = 0;
+                if (damage < 1) {
+                    damage = 1;
                 }
                 life -= damage;
                 invicible = true;
+                transparent = true;
             }
         }
     }
@@ -561,7 +599,7 @@ public class Player extends Entity {
                 }
                 break;
         }
-        if (invicible == true) {
+        if (transparent == true) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F));
         }
         g2.drawImage(image, tempScreenX, tempScreenY, null);
