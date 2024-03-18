@@ -2,7 +2,6 @@ package entity;
 
 import main.GamePanel;
 import main.UtilityTool;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -49,6 +48,9 @@ public class Entity {
     int dyingCounter = 0;
     int hpBarCounter = 0;
     int knockBackCounter = 0;
+    public int guardCounter = 0;
+    int offBalanceCounter = 0;
+    public boolean offBalance = false;
 
     // character attributes
 
@@ -284,6 +286,7 @@ public class Entity {
                 }
                 spriteCounter = 0;
             }
+
             if (invicible == true) {
                 invicibleCounter++;
                 if (invicibleCounter > 40) {
@@ -293,6 +296,13 @@ public class Entity {
             }
             if(shotAvailableCounter < 30){
                 shotAvailableCounter++;
+            }
+            if(offBalance){
+                offBalanceCounter++;
+                if(offBalanceCounter > 60){
+                    offBalance = false;
+                    offBalanceCounter = 0;
+                }
             }
         }
     }
@@ -463,6 +473,15 @@ public class Entity {
             // get an opposite direction of this attacker
             String canGuardDirection = getOppositeDirection(direction);
             if(gp.player.guarding == true && gp.player.direction.equals(canGuardDirection)){
+                // pary
+                if(gp.player.guardCounter < 10){
+                    damage = 0;
+                    gp.playSE(16);
+                    setKnockBack(this, gp.player, knockBackPower);
+                    offBalance = true;
+                    spriteCounter -= 60;
+                }
+                // normal guard
                 damage /= 3;
                 gp.playSE(15);
             } else {
