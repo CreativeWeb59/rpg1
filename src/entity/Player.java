@@ -33,10 +33,6 @@ public class Player extends Entity {
         solidArea.height = 32;
 
         setDefaultValues();
-        getImage();
-        getAttackImage();
-        getGuardImage();
-        setItems();
     }
 
     public void setDefaultValues() {
@@ -55,17 +51,23 @@ public class Player extends Entity {
         maxMana = 4;
         mana = maxMana;
         ammo = 10;
-        strength = 1;  // the more strength he has, the more damage he gives
+        strength = 2;  // the more strength he has, the more damage he gives
         dexterity = 1; // the more dexterity he hass, the less damage he receives
         exp = 0;
         nextLevelExp = 5;
         coin = 500;
         currentWeapon = new OBJ_Sword_Normal(gp);
         currentShield = new OBJ_Shield_Wood(gp);
+        currentLight = null;
         projectile = new OBJ_Fireball(gp);
 //        projectile = new OBJ_Rock(gp);
         attack = getAttack(); // the total attack value is decided by strength and weapon
         defense = getDefense(); // the total defense value is decided by dexterity and shield
+
+        getImage();
+        getAttackImage();
+        getGuardImage();
+        setItems();
     }
 
     public void setDefaultPositions() {
@@ -74,11 +76,15 @@ public class Player extends Entity {
         direction = "down";
     }
 
-    public void restoreLifeAndMana() {
+    public void restoreStatus() {
         life = maxLife;
         mana = maxMana;
         invicible = false;
         transparent = false;
+        attacking = false;
+        guarding = false;
+        knockBack = false;
+        lightUpdated = true;
     }
 
     public void setItems() {

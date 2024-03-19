@@ -51,7 +51,8 @@ public class Entity {
     public int guardCounter = 0;
     int offBalanceCounter = 0;
     public boolean offBalance = false;
-
+    public Entity loot;
+    public boolean opened = false;
     // character attributes
 
     public  String name;
@@ -480,10 +481,12 @@ public class Entity {
                     setKnockBack(this, gp.player, knockBackPower);
                     offBalance = true;
                     spriteCounter -= 60;
+                } else {
+                    // normal guard
+                    damage /= 3;
+                    gp.playSE(15);
                 }
-                // normal guard
-                damage /= 3;
-                gp.playSE(15);
+
             } else {
                 // not guarding
                 gp.playSE(6);
@@ -738,10 +741,10 @@ public class Entity {
         int nexWorldY = user.getTopY();
 
         switch (user.direction){
-            case "up": nexWorldY = user.getTopY() - 1; break;
-            case "down": nexWorldY = user.getBottomY() + 1; break;
-            case "left": nexWorldX = user.getLeftX() - 1; break;
-            case "right": nexWorldX = user.getRightX() + 1; break;
+            case "up": nexWorldY = user.getTopY() - gp.player.speed; break;
+            case "down": nexWorldY = user.getBottomY() + gp.player.speed; break;
+            case "left": nexWorldX = user.getLeftX() - gp.player.speed; break;
+            case "right": nexWorldX = user.getRightX() + gp.player.speed; break;
         }
         int col = nexWorldX/gp.tileSize;
         int row = nexWorldY/gp.tileSize;
@@ -757,5 +760,8 @@ public class Entity {
             }
         }
         return index;
+    }
+    public void setLoot(Entity loot){
+
     }
 }
