@@ -4,13 +4,14 @@ import entity.Entity;
 import main.GamePanel;
 
 public class OBJ_Chest extends Entity {
+    public static final String objName = "Coffre";
     GamePanel gp;
     public OBJ_Chest(GamePanel gp) {
         super(gp);
         this.gp = gp;
 
         type = type_obstacle;
-        name = "Coffre";
+        name = objName;
         image = setup("/resources/objects/chest", gp.tileSize, gp.tileSize);
         image2 = setup("/resources/objects/chest_opened", gp.tileSize, gp.tileSize);
         down1 = image;
@@ -24,27 +25,28 @@ public class OBJ_Chest extends Entity {
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
     }
+    public void setDialogue(){
+        dialogues[0][0] = "Vous ouvrez le coffre et vous y trouvez\nune " + loot.name + " !" + "\n... Vous ne pouvez pas en emporter plus !";
+        dialogues[1][0] = "Vous ouvrez le coffre et vous y trouvez\nune " + loot.name + " !" + "\n... Vous obtenez une \n" + loot.name + " !";
+        dialogues[2][0] = "Le coffre est vide.";
+    }
     public void setLoot(Entity loot){
         this.loot = loot;
+        setDialogue();
     }
     public void interact() {
-        gp.gameState = gp.dialogueState;
-
         if (opened == false) {
             gp.playSE(3);
-            StringBuilder sb = new StringBuilder();
-            sb.append("Vous ouvrez le coffre et vous y trouvez\nune " + loot.name + " !");
 
             if (gp.player.canObtainItem(loot) == false) {
-                sb.append("\n... Vous ne pouvez pas en emporter plus !");
+                startDialogue(this, 0);
             } else {
-                sb.append("\nVous obtenez une \n" + loot.name + " !");
-                down1 = image;
+                startDialogue(this, 1);
+                down1 = image2;
                 opened = true;
             }
-            gp.ui.currentDialogue = sb.toString();
         } else {
-            gp.ui.currentDialogue = "Le coffre est vide";
+            startDialogue(this, 2);
         }
     }
 }

@@ -68,6 +68,7 @@ public class Player extends Entity {
         getAttackImage();
         getGuardImage();
         setItems();
+        setDialogue();
     }
 
     public void setDefaultPositions() {
@@ -75,10 +76,14 @@ public class Player extends Entity {
         worldY = gp.tileSize * 21;
         direction = "down";
     }
+    public void setDialogue(){
+        dialogues[0][0] = "Vous passez au niveau " + level + " !";
+    }
 
     public void restoreStatus() {
         life = maxLife;
         mana = maxMana;
+        speed = defaultSpeed;
         invicible = false;
         transparent = false;
         attacking = false;
@@ -105,6 +110,32 @@ public class Player extends Entity {
         return defense = dexterity * currentShield.defenseValue;
     }
 
+    /**
+     * renvoi le slot de l'arme equipée afin de l'inscrire dans la sauvegarde
+     * @return
+     */
+    public int getCurrentWeaponSlot(){
+        int currentWeaponSlot = 0;
+        for (int i = 0; i < inventory.size(); i++) {
+            if(inventory.get(i) == currentWeapon){
+                currentWeaponSlot = i;
+            }
+        }
+        return currentWeaponSlot;
+    }
+    /**
+     * renvoi le slot du bouclier equipé afin de l'inscrire dans la sauvegarde
+     * @return
+     */
+    public int getCurrentShieldSlot(){
+        int currentShieldSlot = 0;
+        for (int i = 0; i < inventory.size(); i++) {
+            if(inventory.get(i) == currentShield){
+                currentShieldSlot = i;
+            }
+        }
+        return currentShieldSlot;
+    }
     public void getImage() {
         up1 = setup("/resources/player/boy_up_1", gp.tileSize, gp.tileSize);
         up2 = setup("/resources/player/boy_up_2", gp.tileSize, gp.tileSize);
@@ -359,7 +390,6 @@ public class Player extends Entity {
         if (gp.keyH.enterPressed == true) {
             if (i != 999) {
                 attackCanceled = true;
-                gp.gameState = gp.dialogueState;
                 gp.npc[gp.currentMap][i].speak();
             }
         }
@@ -444,7 +474,9 @@ public class Player extends Entity {
             defense = getDefense();
             gp.playSE(8);
             gp.gameState = gp.dialogueState;
-            gp.ui.currentDialogue = "Vous passez au niveau " + level + " !";
+
+            setDialogue();
+            startDialogue(this, 0);
         }
     }
 
@@ -496,22 +528,23 @@ public class Player extends Entity {
     }
     public boolean canObtainItem(Entity item){
         boolean canObtain = false;
+        Entity newItem = gp.eGenerator.getObject(item.name);
 
         // check if stackable
-        if(item.stackable == true){
-            int index = searchItemInInventory(item.name);
+        if(newItem.stackable == true){
+            int index = searchItemInInventory(newItem.name);
             if(index != 999){
                 inventory.get(index).amount++;
                 canObtain = true;
             } else { // new item so need to check vacancy
                 if(inventory.size() != maxInventorySize){
-                    inventory.add(item);
+                    inventory.add(newItem);
                     canObtain = true;
                 }
             }
         } else { // not stackable so check vacancy
             if(inventory.size() != maxInventorySize){
-                inventory.add(item);
+                inventory.add(newItem);
                 canObtain = true;
             }
         }

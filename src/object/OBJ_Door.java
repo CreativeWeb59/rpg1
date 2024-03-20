@@ -4,11 +4,12 @@ import entity.Entity;
 import main.GamePanel;
 
 public class OBJ_Door extends Entity {
+    public static final String objName = "Porte";
     GamePanel gp;
     public OBJ_Door(GamePanel gp){
         super(gp);
         this.gp = gp;
-        name = "Porte";
+        name = objName;
         type = type_obstacle;
         down1 = setup("/resources/objects/door", gp.tileSize, gp.tileSize);
         collision = true;
@@ -19,9 +20,13 @@ public class OBJ_Door extends Entity {
         solidArea.height = 32;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
+
+        setDialogue();
+    }
+    public void setDialogue(){
+        dialogues[0][0] = "Vous avez besoin d'une clé !";
     }
     public void interact(){
-        gp.gameState = gp.dialogueState;
-        gp.ui.currentDialogue = "Vous avez besoin d'une clé !";
+        startDialogue(this, 0);
     }
 }

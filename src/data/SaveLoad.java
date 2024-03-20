@@ -12,22 +12,6 @@ public class SaveLoad {
     public SaveLoad(GamePanel gp) {
         this.gp = gp;
     }
-    public Entity getObject(String itemName){
-        Entity obj = null;
-        switch (itemName){
-            case "Hache simple": obj = new OBJ_Axe(gp); break;
-            case "Bottes": obj = new OBJ_Boots(gp); break;
-            case "Clé": obj = new OBJ_Key(gp); break;
-            case "Lanterne": obj = new OBJ_Lantern(gp); break;
-            case "Potion rouge": obj = new OBJ_Potion_Red(gp); break;
-            case "Bouclier bleue": obj = new OBJ_Shield_Blue(gp); break;
-            case "Bouclier en bois": obj = new OBJ_Shield_Wood(gp); break;
-            case "Epée": obj = new OBJ_Sword_Normal(gp); break;
-            case "Tente": obj = new OBJ_Tent(gp); break;
-            case "Coffre": obj = new OBJ_Chest(gp); break;
-        }
-        return obj;
-    }
     public void save(){
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("save.dat")));
@@ -46,6 +30,34 @@ public class SaveLoad {
             for (int i = 0; i < gp.player.inventory.size(); i++) {
                 ds.itemsNames.add(gp.player.inventory.get(i).name);
                 ds.itemsAmounts.add(gp.player.inventory.get(i).amount);
+            }
+
+            // player equipment
+            ds.currentWeaponSlot = gp.player.getCurrentWeaponSlot();
+            ds.currentShieldSlot = gp.player.getCurrentShieldSlot();
+
+            // objets sur la carte
+            ds.mapObjectNames = new String[gp.maxMap][gp.obj[1].length];
+            ds.mapObjectWorldX = new int[gp.maxMap][gp.obj[1].length];
+            ds.mapObjectWorldY = new int[gp.maxMap][gp.obj[1].length];
+            ds.mapObjectLootNames = new String[gp.maxMap][gp.obj[1].length];
+            ds.mapObjectOpened = new boolean[gp.maxMap][gp.obj[1].length];
+
+            for (int mapNum = 0; mapNum < gp.maxMap; mapNum++) {
+                for (int i = 0; i < gp.obj[1].length; i++) {
+                    if(gp.obj[mapNum][i] == null){
+                        ds.mapObjectNames[mapNum][i] = "NA";
+                    } else {
+                        ds.mapObjectNames[mapNum][i] = gp.obj[mapNum][i].name;
+                        ds.mapObjectWorldX[mapNum][i] = gp.obj[mapNum][i].worldX;
+                        ds.mapObjectWorldY[mapNum][i] = gp.obj[mapNum][i].worldY;
+                        if(gp.obj[mapNum][i].loot != null){
+                            ds.mapObjectLootNames[mapNum][i] = gp.obj[mapNum][i].loot.name;
+                        }
+                        ds.mapObjectOpened[mapNum][i] = gp.obj[mapNum][i].opened;
+                    }
+
+                }
             }
 
             // write the dataStorage object
@@ -74,8 +86,35 @@ public class SaveLoad {
             // player inventory
             gp.player.inventory.clear();
             for (int i = 0; i < ds.itemsNames.size(); i++) {
-                gp.player.inventory.add(getObject(ds.itemsNames.get(i)));
+                gp.player.inventory.add(gp.eGenerator.getObject(ds.itemsNames.get(i)));
                 gp.player.inventory.get(i).amount = ds.itemsAmounts.get(i);
+            }
+
+            // player equipment
+            gp.player.currentWeapon = gp.player.inventory.get(ds.currentWeaponSlot);
+            gp.player.currentShield = gp.player.inventory.get(ds.currentShieldSlot);
+            gp.player.getAttack();
+            gp.player.getDefense();
+            gp.player.getAttackImage();
+
+            // objets sur la carte
+            for (int mapNum = 0; mapNum < gp.maxMap; mapNum++) {
+                for (int i = 0; i < gp.obj[1].length; i++) {
+                        if (ds.mapObjectNames[mapNum][i].equals("NA")) {
+                            gp.obj[mapNum][i] = null;
+                        } else {
+                            gp.obj[mapNum][i] = gp.eGenerator.getObject(ds.mapObjectNames[mapNum][i]);
+                            gp.obj[mapNum][i].worldX = ds.mapObjectWorldX[mapNum][i];
+                            gp.obj[mapNum][i].worldY = ds.mapObjectWorldY[mapNum][i];
+                            if (ds.mapObjectLootNames[mapNum][i] != null) {
+                                gp.obj[mapNum][i].loot = gp.eGenerator.getObject(ds.mapObjectLootNames[mapNum][i]);
+                            }
+                            gp.obj[mapNum][i].opened = ds.mapObjectOpened[mapNum][i];
+                            if (gp.obj[mapNum][i].opened) {
+                                gp.obj[mapNum][i].down1 = gp.obj[mapNum][i].image2;
+                            }
+                        }
+                }
             }
 
             // write the dataStorage object

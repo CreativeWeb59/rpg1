@@ -4,13 +4,14 @@ import entity.Entity;
 import main.GamePanel;
 
 public class OBJ_ManaCrystal extends Entity {
+    public static final String objName = "Cristal de mana";
     GamePanel gp;
 
     public OBJ_ManaCrystal(GamePanel gp) {
         super(gp);
         this.gp = gp;
 
-        name = "Cristal de mana";
+        name = objName;
         type = type_pickupOnly;
         value = 1;
         down1 = setup("/resources/objects/manacrystal_full", gp.tileSize, gp.tileSize);

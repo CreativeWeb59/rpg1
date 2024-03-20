@@ -45,6 +45,7 @@ public class GamePanel extends JPanel implements Runnable{
     public TileManager tileM = new TileManager(this);
     public KeyHandler keyH = new KeyHandler(this);
     SaveLoad saveLoad = new SaveLoad(this);
+    public EntityGenerator eGenerator = new EntityGenerator(this);
     Sound music = new Sound();
     Sound se = new Sound();
     public CollisionChecker cChecker = new CollisionChecker(this);
@@ -109,6 +110,7 @@ public class GamePanel extends JPanel implements Runnable{
     public void resetGame(boolean restart){
         player.setDefaultPositions();
         player.restoreStatus();
+        player.resetCounter();
         aSetter.setNPC();
         aSetter.setMonster();
 

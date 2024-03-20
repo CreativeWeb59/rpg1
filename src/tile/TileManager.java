@@ -22,8 +22,10 @@ public class TileManager {
         mapTileNum = new int[gp.maxMap][gp.maxWorldCol][gp.maxWorldRow];
 
         getTileImage();
-        loadMap("/resources/maps/worldV3.txt", 0);
+        loadMap("/resources/maps/worldmap.txt", 0);
         loadMap("/resources/maps/interior01.txt", 1);
+        loadMap("/resources/maps/dungeon01.txt", 2);
+        loadMap("/resources/maps/dungeon02.txt", 3);
     }
     public void getTileImage(){
         setup(0, "grass", false);

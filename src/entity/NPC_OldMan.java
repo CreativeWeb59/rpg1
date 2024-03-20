@@ -11,6 +11,9 @@ public class NPC_OldMan extends Entity{
         super(gp);
         direction = "down";
         speed = 2;
+
+        dialogueSet = -1;
+
         getImage();
         setDialogue();
     }
@@ -25,10 +28,20 @@ public class NPC_OldMan extends Entity{
         right2 = setup("/resources/npc/oldman_right_2", gp.tileSize, gp.tileSize);
     }
     public void setDialogue(){
-        dialogues[0] = "Salut, lad.";
-        dialogues[1] = "Alors, tu viens sur cette île pour trouver\nle trésor ?";
-        dialogues[2] = "J'étais le meilleur mage... mais\nmaintenant je suis trop vieux pour\ncontinuer l'aventure.";
-        dialogues[3] = "Bien, bonne chance à toi.";
+        dialogues[0][0] = "Salut, lad.";
+        dialogues[0][1] = "Alors, tu viens sur cette île pour trouver\nle trésor ?";
+        dialogues[0][2] = "J'étais le meilleur mage... mais\nmaintenant je suis trop vieux pour\ncontinuer l'aventure.";
+        dialogues[0][3] = "Bien, bonne chance à toi.";
+
+        dialogues[1][0] = "Si tu te sens épuisé, repose toi près de l'eau";
+        dialogues[1][1] = "Toutefois, les monstres réapparaissent si tu te reposes.\nlJe ne sais pas pourquoi, mais c'est comme ça.";
+        dialogues[1][2] = "J'étais le meilleur mage... mais\nmaintenant je suis trop vieux pour\ncontinuer l'aventure.";
+        dialogues[1][3] = "Dans tous les cas, fais attention.";
+
+        dialogues[2][0] = "Je me demande comment on ouvre une porte...";
+//        dialogues[2][1] = "";
+//        dialogues[2][2] = "";
+//        dialogues[2][3] = "";
     }
     public void setAction(){
         if(onPath == true){
@@ -64,7 +77,15 @@ public class NPC_OldMan extends Entity{
         }
     }
     public void speak(){
-        super.speak();
-        onPath = true;
+        facePlayer();
+        startDialogue(this, dialogueSet);
+
+        dialogueSet++;
+
+        if(dialogues[dialogueSet][0] == null){
+            dialogueSet--;
+        }
+
+//        onPath = true;
     }
 }

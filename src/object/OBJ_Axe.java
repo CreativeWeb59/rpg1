@@ -4,9 +4,10 @@ import entity.Entity;
 import main.GamePanel;
 
 public class OBJ_Axe extends Entity {
+    public static final String objName = "Hache simple";
     public OBJ_Axe(GamePanel gp) {
         super(gp);
-        name = "Hache simple";
+        name = objName;
         type = type_axe;
         attackValue = 2;
         attackArea.width = 30;
