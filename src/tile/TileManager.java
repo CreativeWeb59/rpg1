@@ -9,25 +9,86 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class TileManager {
     GamePanel gp;
     public Tile[] tile;
-    public int mapTileNum[][] [];
-    boolean drawPath = true;
+    public int mapTileNum[][][];
+    boolean drawPath = false;
+    ArrayList<String> fileNames = new ArrayList<>();
+    ArrayList<String> collisionStatus = new ArrayList<>();
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        tile = new Tile[50];
-        mapTileNum = new int[gp.maxMap][gp.maxWorldCol][gp.maxWorldRow];
+        // read tile data file
+        InputStream is = getClass().getResourceAsStream("/resources/maps/tiledata.txt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
+        // getting tiles names and collision info from the file
+        String line;
+        try {
+            while ((line = br.readLine()) != null){
+                fileNames.add(line);
+                collisionStatus.add(br.readLine());
+            }
+            br.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        // instantialize the tile array based on the fileNames size
+        tile = new Tile[fileNames.size()];
         getTileImage();
+
+        // get the maxWorldCol & row
+        is = getClass().getResourceAsStream("/resources/maps/worldmap.txt");
+        br = new BufferedReader(new InputStreamReader(is));
+
+        try {
+            String line2 = br.readLine();
+            String maxTile[] = line2.split(" ");
+
+            gp.maxWorldCol = maxTile.length;
+            gp.maxWorldRow = maxTile.length;
+            mapTileNum = new int[gp.maxMap][gp.maxWorldCol][gp.maxWorldRow];
+
+            br.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+//        loadMap("/maps/sample.txt", 0);
         loadMap("/resources/maps/worldmap.txt", 0);
-        loadMap("/resources/maps/interior01.txt", 1);
+        loadMap("/resources/maps/indoor01.txt", 1);
         loadMap("/resources/maps/dungeon01.txt", 2);
         loadMap("/resources/maps/dungeon02.txt", 3);
     }
+
+    /**
+     * recuperation des images par rapport au fichier data.txt
+     */
     public void getTileImage(){
+        for (int i = 0; i < fileNames.size(); i++) {
+            String fileName;
+            boolean collision;
+            // get a file name
+            fileName = fileNames.get(i);
+            // get a collision status
+            if(collisionStatus.get(i).equals("true")){
+                collision = true;
+            } else {
+                collision = false;
+            }
+            setup(i, fileName, collision);
+        }
+    }
+
+    /**
+     * recuperation de l'image par rapport au chiffre dans le fichier map.txt
+     */
+    public void getTileImageAnc(){
         setup(0, "grass", false);
         setup(1, "grass", false);
         setup(2, "grass", false);
@@ -78,7 +139,7 @@ public class TileManager {
         UtilityTool uTool = new UtilityTool();
         try {
             tile[index] = new Tile();
-            tile[index].image = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/" + imageName + ".png"));
+            tile[index].image = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/newTiles/" + imageName));
             tile[index].image = uTool.scaleImage(tile[index].image, gp.tileSize, gp.tileSize);
             tile[index].collision = collision;
         } catch (IOException e){
@@ -144,5 +205,17 @@ public class TileManager {
                 g2.fillRect(screenX, screenY, gp.tileSize, gp.tileSize);
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "TileManager{" +
+                "gp=" + gp +
+                ", tile=" + Arrays.toString(tile) +
+                ", mapTileNum=" + Arrays.toString(mapTileNum) +
+                ", drawPath=" + drawPath +
+                ", fileNames=" + fileNames +
+                ", collisionStatus=" + collisionStatus +
+                '}';
     }
 }

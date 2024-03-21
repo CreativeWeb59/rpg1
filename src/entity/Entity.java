@@ -22,6 +22,7 @@ public class Entity {
     public int solidAreaDefaultX, solidAreaDefaultY;
     public String[][] dialogues = new String[20][20];
     public Entity attacker;
+    public Entity linkedEntity;
     public boolean collision = false;
 
     // state
@@ -94,6 +95,7 @@ public class Entity {
     public final int type_pickupOnly = 7;
     public final int type_obstacle = 8;
     public final int type_light = 9;
+    public final int type_pickaxe = 10;
 
     public Entity(GamePanel gp) {
         this.gp = gp;
@@ -137,6 +139,9 @@ public class Entity {
         return goalRow;
     }
     public void setAction(){
+    }
+    public void move(String direction){
+
     }
     public void damageReaction(){}
     public void speak(){
@@ -378,9 +383,9 @@ public class Entity {
             }
         }
     }
-    public void getRandomDirection(){
+    public void getRandomDirection(int interval){
         actionLockCounter ++;
-        if(actionLockCounter == 120){
+        if(actionLockCounter == interval){
             Random random = new Random();
             int i = random.nextInt(100)+1; // random from 1 to 100
             if(i <=25){

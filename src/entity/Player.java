@@ -38,8 +38,8 @@ public class Player extends Entity {
     public void setDefaultValues() {
         worldX = gp.tileSize * 23;
         worldY = gp.tileSize * 21;
-//        worldX = gp.tileSize * 12;
-//        worldY = gp.tileSize * 13;
+        worldX = gp.tileSize * 12;
+        worldY = gp.tileSize * 10;
         defaultSpeed = 4;
         speed = defaultSpeed;
         direction = "down";
@@ -52,7 +52,7 @@ public class Player extends Entity {
         mana = maxMana;
         ammo = 10;
         strength = 2;  // the more strength he has, the more damage he gives
-        dexterity = 1; // the more dexterity he hass, the less damage he receives
+        dexterity = 1; // the more dexterity he has, the less damage he receives
         exp = 0;
         nextLevelExp = 5;
         coin = 500;
@@ -71,12 +71,15 @@ public class Player extends Entity {
         setDialogue();
     }
 
+    // 23 x 21
     public void setDefaultPositions() {
+        gp.currentMap = 0;
         worldX = gp.tileSize * 23;
         worldY = gp.tileSize * 21;
         direction = "down";
     }
-    public void setDialogue(){
+
+    public void setDialogue() {
         dialogues[0][0] = "Vous passez au niveau " + level + " !";
     }
 
@@ -97,6 +100,8 @@ public class Player extends Entity {
         inventory.add(currentWeapon);
         inventory.add(currentShield);
         inventory.add(new OBJ_Key(gp));
+        inventory.add(new OBJ_Lantern(gp));
+        inventory.add(new OBJ_Pickaxe(gp));
     }
 
     public int getAttack() {
@@ -112,30 +117,34 @@ public class Player extends Entity {
 
     /**
      * renvoi le slot de l'arme equipée afin de l'inscrire dans la sauvegarde
+     *
      * @return
      */
-    public int getCurrentWeaponSlot(){
+    public int getCurrentWeaponSlot() {
         int currentWeaponSlot = 0;
         for (int i = 0; i < inventory.size(); i++) {
-            if(inventory.get(i) == currentWeapon){
+            if (inventory.get(i) == currentWeapon) {
                 currentWeaponSlot = i;
             }
         }
         return currentWeaponSlot;
     }
+
     /**
      * renvoi le slot du bouclier equipé afin de l'inscrire dans la sauvegarde
+     *
      * @return
      */
-    public int getCurrentShieldSlot(){
+    public int getCurrentShieldSlot() {
         int currentShieldSlot = 0;
         for (int i = 0; i < inventory.size(); i++) {
-            if(inventory.get(i) == currentShield){
+            if (inventory.get(i) == currentShield) {
                 currentShieldSlot = i;
             }
         }
         return currentShieldSlot;
     }
+
     public void getImage() {
         up1 = setup("/resources/player/boy_up_1", gp.tileSize, gp.tileSize);
         up2 = setup("/resources/player/boy_up_2", gp.tileSize, gp.tileSize);
@@ -146,7 +155,8 @@ public class Player extends Entity {
         right1 = setup("/resources/player/boy_right_1", gp.tileSize, gp.tileSize);
         right2 = setup("/resources/player/boy_right_2", gp.tileSize, gp.tileSize);
     }
-    public void getSleepingImage(BufferedImage image){
+
+    public void getSleepingImage(BufferedImage image) {
         up1 = image;
         up2 = image;
         down1 = image;
@@ -178,15 +188,27 @@ public class Player extends Entity {
             attackRight1 = setup("/resources/player/boy_axe_right_1", gp.tileSize * 2, gp.tileSize);
             attackRight2 = setup("/resources/player/boy_axe_right_2", gp.tileSize * 2, gp.tileSize);
         }
+        if (currentWeapon.type == type_pickaxe) {
+            attackUp1 = setup("/resources/player/boy_pick_up_1", gp.tileSize, gp.tileSize * 2);
+            attackUp2 = setup("/resources/player/boy_pick_up_2", gp.tileSize, gp.tileSize * 2);
+            attackDown1 = setup("/resources/player/boy_pick_down_1", gp.tileSize, gp.tileSize * 2);
+            attackDown2 = setup("/resources/player/boy_pick_down_2", gp.tileSize, gp.tileSize * 2);
+            attackLeft1 = setup("/resources/player/boy_pick_left_1", gp.tileSize * 2, gp.tileSize);
+            attackLeft2 = setup("/resources/player/boy_pick_left_2", gp.tileSize * 2, gp.tileSize);
+            attackRight1 = setup("/resources/player/boy_pick_right_1", gp.tileSize * 2, gp.tileSize);
+            attackRight2 = setup("/resources/player/boy_pick_right_2", gp.tileSize * 2, gp.tileSize);
+        }
     }
-    public void getGuardImage(){
+
+    public void getGuardImage() {
         guardUp = setup("/resources/player/boy_guard_up", gp.tileSize, gp.tileSize);
         guardDown = setup("/resources/player/boy_guard_down", gp.tileSize, gp.tileSize);
         guardLeft = setup("/resources/player/boy_guard_left", gp.tileSize, gp.tileSize);
         guardRight = setup("/resources/player/boy_guard_right", gp.tileSize, gp.tileSize);
     }
+
     public void update() {
-        if(knockBack == true){
+        if (knockBack == true) {
             collisionOn = false;
             gp.cChecker.checkTile(this); // active / desactive les collisions
             gp.cChecker.checkObject(this, true);
@@ -194,7 +216,7 @@ public class Player extends Entity {
             gp.cChecker.checkEntity(this, gp.monster);
             gp.cChecker.checkEntity(this, gp.iTile);
 
-            if(collisionOn == true){
+            if (collisionOn == true) {
                 knockBackCounter = 0;
                 knockBack = false;
                 speed = defaultSpeed;
@@ -214,23 +236,18 @@ public class Player extends Entity {
                         break;
                 }
             }
-                knockBackCounter++;
-                if(knockBackCounter == 10){ // distance du knockBack
-                    knockBackCounter = 0;
-                    knockBack = false;
-                    speed = defaultSpeed;
-                }
+            knockBackCounter++;
+            if (knockBackCounter == 10) { // distance du knockBack
+                knockBackCounter = 0;
+                knockBack = false;
+                speed = defaultSpeed;
             }
-
-        else if (attacking == true) {
+        } else if (attacking == true) {
             attacking();
-        }
-        else if(keyH.spacePressesd == true){
+        } else if (keyH.spacePressesd == true) {
             guarding = true;
             guardCounter++;
-        }
-
-        else if (keyH.upPressed == true || keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true
+        } else if (keyH.upPressed == true || keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true
                 || keyH.enterPressed == true) {
             if (keyH.upPressed == true) {
                 direction = "up";
@@ -365,13 +382,12 @@ public class Player extends Entity {
                 gp.obj[gp.currentMap][i] = null;
             }
             // inventory items
-            else if(gp.obj[gp.currentMap][i].type == type_obstacle){
-                if(keyH.enterPressed == true){
+            else if (gp.obj[gp.currentMap][i].type == type_obstacle) {
+                if (keyH.enterPressed == true) {
                     attackCanceled = true;
                     gp.obj[gp.currentMap][i].interact();
                 }
-            }
-            else {
+            } else {
                 // inventory items
                 String text;
                 if (canObtainItem(gp.obj[gp.currentMap][i]) == true) {
@@ -387,11 +403,12 @@ public class Player extends Entity {
     }
 
     public void interactNPC(int i) {
-        if (gp.keyH.enterPressed == true) {
-            if (i != 999) {
+        if (i != 999) {
+            if (gp.keyH.enterPressed == true) {
                 attackCanceled = true;
                 gp.npc[gp.currentMap][i].speak();
             }
+            gp.npc[gp.currentMap][i].move(direction);
         }
     }
 
@@ -415,10 +432,10 @@ public class Player extends Entity {
             if (gp.monster[gp.currentMap][i].invicible == false) {
                 gp.playSE(5);
 
-                if(knockBackPower > 0){
-                    setKnockBack(gp.monster[gp.currentMap][i], attacker,  knockBackPower);
+                if (knockBackPower > 0) {
+                    setKnockBack(gp.monster[gp.currentMap][i], attacker, knockBackPower);
                 }
-                if(gp.monster[gp.currentMap][i].offBalance){
+                if (gp.monster[gp.currentMap][i].offBalance) {
                     attack *= 5;
                 }
 
@@ -440,6 +457,7 @@ public class Player extends Entity {
             }
         }
     }
+
     public void damageInteractiveTile(int i) {
         if (i != 999 && gp.iTile[gp.currentMap][i].destructible == true && gp.iTile[gp.currentMap][i].isCorrectItem(this) == true &&
                 gp.iTile[gp.currentMap][i].invicible == false) {
@@ -450,6 +468,7 @@ public class Player extends Entity {
             generateParticle(gp.iTile[gp.currentMap][i], gp.iTile[gp.currentMap][i]);
 
             if (gp.iTile[gp.currentMap][i].life == 0) {
+                gp.iTile[gp.currentMap][i].checkDrop();
                 gp.iTile[gp.currentMap][i] = gp.iTile[gp.currentMap][i].getDestroyedForm();
             }
         }
@@ -484,19 +503,18 @@ public class Player extends Entity {
         int itemIndex = gp.ui.getItemIndexOnSlot(gp.ui.playerSlotCol, gp.ui.playerSlotRow);
         if (itemIndex < inventory.size()) {
             Entity selectedItems = inventory.get(itemIndex);
-            if (selectedItems.type == type_sword || selectedItems.type == type_axe) {
+            if (selectedItems.type == type_sword || selectedItems.type == type_axe || selectedItems.type == type_pickaxe) {
                 currentWeapon = selectedItems;
                 attack = getAttack();
                 getAttackImage();
-                ;
             }
             if (selectedItems.type == type_shield) {
                 currentShield = selectedItems;
                 defense = getDefense();
 //                getPlayerAttackImage();
             }
-            if(selectedItems.type == type_light){
-                if(currentLight == selectedItems){
+            if (selectedItems.type == type_light) {
+                if (currentLight == selectedItems) {
                     currentLight = null;
                 } else {
                     currentLight = selectedItems;
@@ -504,8 +522,8 @@ public class Player extends Entity {
                 lightUpdated = true;
             }
             if (selectedItems.type == type_consumable) {
-                if(selectedItems.use(this) == true){
-                    if(selectedItems.amount > 1){
+                if (selectedItems.use(this) == true) {
+                    if (selectedItems.amount > 1) {
                         selectedItems.amount--;
                     } else {
                         inventory.remove(itemIndex);
@@ -516,40 +534,43 @@ public class Player extends Entity {
             }
         }
     }
-    public int searchItemInInventory(String itemName){
+
+    public int searchItemInInventory(String itemName) {
         int itemIndex = 999;
         for (int i = 0; i < inventory.size(); i++) {
-            if (inventory.get(i).name.equals(itemName)){
+            if (inventory.get(i).name.equals(itemName)) {
                 itemIndex = i;
                 break;
             }
         }
         return itemIndex;
     }
-    public boolean canObtainItem(Entity item){
+
+    public boolean canObtainItem(Entity item) {
         boolean canObtain = false;
         Entity newItem = gp.eGenerator.getObject(item.name);
 
         // check if stackable
-        if(newItem.stackable == true){
+        if (newItem.stackable == true) {
             int index = searchItemInInventory(newItem.name);
-            if(index != 999){
+            if (index != 999) {
                 inventory.get(index).amount++;
                 canObtain = true;
             } else { // new item so need to check vacancy
-                if(inventory.size() != maxInventorySize){
+                if (inventory.size() != maxInventorySize) {
                     inventory.add(newItem);
                     canObtain = true;
                 }
             }
         } else { // not stackable so check vacancy
-            if(inventory.size() != maxInventorySize){
+            if (inventory.size() != maxInventorySize) {
                 inventory.add(newItem);
                 canObtain = true;
             }
         }
         return canObtain;
     }
+
     public void draw(Graphics2D g2) {
         BufferedImage image = null;
         int tempScreenX = screenX;
@@ -574,7 +595,7 @@ public class Player extends Entity {
                         image = attackUp2;
                     }
                 }
-                if(guarding == true){
+                if (guarding == true) {
                     image = guardUp;
                 }
                 break;
@@ -595,7 +616,7 @@ public class Player extends Entity {
                         image = attackDown2;
                     }
                 }
-                if(guarding == true){
+                if (guarding == true) {
                     image = guardDown;
                 }
                 break;
@@ -617,7 +638,7 @@ public class Player extends Entity {
                         image = attackLeft2;
                     }
                 }
-                if(guarding == true){
+                if (guarding == true) {
                     image = guardLeft;
                 }
                 break;
@@ -638,7 +659,7 @@ public class Player extends Entity {
                         image = attackRight2;
                     }
                 }
-                if(guarding == true){
+                if (guarding == true) {
                     image = guardRight;
                 }
                 break;
