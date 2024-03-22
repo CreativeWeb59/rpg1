@@ -1,12 +1,14 @@
 package main;
 
 
+import data.Progress;
 import entity.NPC_BigRock;
 import entity.NPC_Merchant;
 import entity.NPC_OldMan;
 import monster.MON_Bat;
 import monster.MON_GreenSlime;
 import monster.MON_Orc;
+import monster.MON_SkeletonLord;
 import object.*;
 import tile_interactive.IT_DestructibleWall;
 import tile_interactive.IT_DryTree;
@@ -80,9 +82,19 @@ public class AssetSetter {
         i++;
 
         gp.obj[mapNum][i] = new OBJ_Door_iron(gp);
-        gp.obj[mapNum][i].setLoot(new OBJ_Potion_Red(gp));
         gp.obj[mapNum][i].worldX = gp.tileSize*18;
         gp.obj[mapNum][i].worldY = gp.tileSize*23;
+
+        mapNum = 3;
+        i = 0;
+        gp.obj[mapNum][i] = new OBJ_Door_iron(gp);
+        gp.obj[mapNum][i].worldX = gp.tileSize*25;
+        gp.obj[mapNum][i].worldY = gp.tileSize*15;
+
+        i++;
+        gp.obj[mapNum][i] = new OBJ_BlueHeart(gp);
+        gp.obj[mapNum][i].worldX = gp.tileSize*25;
+        gp.obj[mapNum][i].worldY = gp.tileSize*8;
     }
     public void setNPC(){
         int mapNum = 0;
@@ -169,6 +181,15 @@ public class AssetSetter {
         gp.monster[mapNum][i] = new MON_Bat(gp);
         gp.monster[mapNum][i].worldX = gp.tileSize * 10;
         gp.monster[mapNum][i].worldY = gp.tileSize * 19;
+        mapNum = 3;
+        i++;
+
+        if(!Progress.skeletonLordDefeated){
+            gp.monster[mapNum][i] = new MON_SkeletonLord(gp);
+            gp.monster[mapNum][i].worldX = gp.tileSize * 23;
+            gp.monster[mapNum][i].worldY = gp.tileSize * 16;
+        }
+
     }
     public void setInteractiveTile(){
         int mapNum = 0;

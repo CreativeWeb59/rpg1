@@ -40,6 +40,10 @@ public class Player extends Entity {
         worldY = gp.tileSize * 21;
         worldX = gp.tileSize * 12;
         worldY = gp.tileSize * 10;
+
+        worldX = gp.tileSize * 26;
+        worldY = gp.tileSize * 40;
+
         defaultSpeed = 4;
         speed = defaultSpeed;
         direction = "down";
@@ -51,7 +55,7 @@ public class Player extends Entity {
         maxMana = 4;
         mana = maxMana;
         ammo = 10;
-        strength = 2;  // the more strength he has, the more damage he gives
+        strength = 5;  // the more strength he has, the more damage he gives
         dexterity = 1; // the more dexterity he has, the less damage he receives
         exp = 0;
         nextLevelExp = 5;
@@ -366,11 +370,14 @@ public class Player extends Entity {
         if (mana > maxMana) {
             mana = maxMana;
         }
-        if (life <= 0) {
-            gp.gameState = gp.gameOverState;
-            gp.ui.commandNum = -1;
-            gp.stopMusic();
-            gp.playSE(12);
+        // god mode
+        if(!keyH.godModeOn){
+            if (life <= 0) {
+                gp.gameState = gp.gameOverState;
+                gp.ui.commandNum = -1;
+                gp.stopMusic();
+                gp.playSE(12);
+            }
         }
     }
 
@@ -528,9 +535,7 @@ public class Player extends Entity {
                     } else {
                         inventory.remove(itemIndex);
                     }
-
                 }
-
             }
         }
     }
@@ -667,7 +672,10 @@ public class Player extends Entity {
         if (transparent == true) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F));
         }
-        g2.drawImage(image, tempScreenX, tempScreenY, null);
+        if(drawing){
+            g2.drawImage(image, tempScreenX, tempScreenY, null);
+        }
+
 
         // reset alpha
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));

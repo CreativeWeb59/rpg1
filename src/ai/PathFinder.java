@@ -1,7 +1,6 @@
 package ai;
 
 import main.GamePanel;
-
 import java.util.ArrayList;
 
 public class PathFinder {

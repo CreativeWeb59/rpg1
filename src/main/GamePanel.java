@@ -31,7 +31,7 @@ public class GamePanel extends JPanel implements Runnable{
     public int maxWorldCol;
     public int maxWorldRow;
     public final int maxMap = 10;
-    public int currentMap = 0;
+    public int currentMap = 3;
     // for full screen
     int screenWidth2 = screenWidth;
     int screenHeight2 = screenHeight;
@@ -46,6 +46,7 @@ public class GamePanel extends JPanel implements Runnable{
     public KeyHandler keyH = new KeyHandler(this);
     SaveLoad saveLoad = new SaveLoad(this);
     public EntityGenerator eGenerator = new EntityGenerator(this);
+    public CutSceneManager csManager = new CutSceneManager(this);
     Sound music = new Sound();
     Sound se = new Sound();
     public CollisionChecker cChecker = new CollisionChecker(this);
@@ -65,7 +66,7 @@ public class GamePanel extends JPanel implements Runnable{
     public Entity monster[][] = new Entity[maxMap][20];
     public InteractiveTile iTile[][] = new InteractiveTile[maxMap][50];
     public Entity projectile[][] = new Entity[maxMap][20];
-//    public ArrayList<Entity> projectileList = new ArrayList<>();
+    public ArrayList<Entity> projectileList = new ArrayList<>();
     public ArrayList<Entity> particleList = new ArrayList<>();
     ArrayList<Entity> entityList = new ArrayList<>();
 
@@ -82,6 +83,10 @@ public class GamePanel extends JPanel implements Runnable{
     public final int tradeState = 8;
     public final int sleepState = 9;
     public final int mapState = 10;
+    public final int cutsceneState = 11;
+
+    // others
+    public boolean bossBattleOn = false;
 
     // area
     public int currentArea;
@@ -116,7 +121,10 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
     public void resetGame(boolean restart){
+        stopMusic();
         currentArea = outside;
+        removeTempEntity();
+        bossBattleOn = false;
         player.setDefaultPositions();
         player.restoreStatus();
         player.resetCounter();
@@ -311,6 +319,8 @@ public class GamePanel extends JPanel implements Runnable{
             // mini map
             map.drawMiniMap(g2);
 
+            // cutScene
+            csManager.draw(g2);
             // Ui
             ui.draw(g2);
         }
@@ -318,9 +328,20 @@ public class GamePanel extends JPanel implements Runnable{
         if(keyH.checkDrawTime == true){
             long drawEnd = System.nanoTime();
             long passed = drawEnd - drawStart;
+
+            g2.setFont(new Font("Arial", Font.PLAIN, 20));
             g2.setColor(Color.white);
-            g2.drawString("Draw Time " + passed, 10, 400);
-            System.out.println("Draw Time " + passed);
+
+            int x = 20;
+            int y = 200;
+            int lineHeight = 20;
+
+            g2.drawString("WorldX : " + player.worldX, x, y); y += lineHeight;
+            g2.drawString("WorldY : " + player.worldY, x, y); y += lineHeight;
+            g2.drawString("Col : " + (player.worldX + player.solidArea.x) / tileSize, x, y); y += lineHeight;
+            g2.drawString("Row : " + (player.worldY + player.solidArea.y) / tileSize, x, y); y += lineHeight;
+            g2.drawString("Draw Time : " + passed, x, y);  y += lineHeight;
+            g2.drawString("God Mode : " + keyH.godModeOn, x, y);
         }
     }
 
@@ -460,6 +481,19 @@ public class GamePanel extends JPanel implements Runnable{
         }
         currentArea = nextArea;
         aSetter.setMonster();
+    }
+
+    /**
+     * supprime un objet temporaire
+     */
+    public void removeTempEntity(){
+        for (int mapNum = 0; mapNum < maxMap; mapNum++) {
+            for (int i = 0; i < obj[1].length; i++) {
+                if(obj[mapNum][i] != null && obj[mapNum][i].temp){
+                    obj[mapNum][i] = null;
+                }
+            }
+        }
     }
 }
 
